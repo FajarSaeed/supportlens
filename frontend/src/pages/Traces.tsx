@@ -17,6 +17,8 @@ function formatDate(iso: string) {
 export default function Traces() {
   const [traces, setTraces] = useState<TraceOut[]>([])
   const [filter, setFilter] = useState<string>('')
+  const [search, setSearch] = useState<string>('')
+  const [searchInput, setSearchInput] = useState<string>('')
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -24,11 +26,21 @@ export default function Traces() {
   useEffect(() => {
     setLoading(true)
     api
-      .getTraces(filter || undefined)
+      .getTraces(filter || undefined, search || undefined)
       .then(setTraces)
       .catch(() => setError('Failed to load traces. Is the backend running on :8000?'))
       .finally(() => setLoading(false))
-  }, [filter])
+  }, [filter, search])
+
+  function handleSearchSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setSearch(searchInput.trim())
+  }
+
+  function clearSearch() {
+    setSearchInput('')
+    setSearch('')
+  }
 
   function toggleRow(id: string) {
     setExpanded((prev) => {
@@ -58,6 +70,38 @@ export default function Traces() {
           ))}
         </select>
       </div>
+
+      {/* Keyword search bar */}
+      <form onSubmit={handleSearchSubmit} className="flex gap-2 items-center">
+        <input
+          type="text"
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          placeholder="Search by keyword in messages…"
+          className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+        <button
+          type="submit"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+        >
+          Search
+        </button>
+        {search && (
+          <button
+            type="button"
+            onClick={clearSearch}
+            className="text-sm text-gray-500 hover:text-gray-700 px-3 py-2 rounded-lg border border-gray-300 bg-white transition-colors"
+          >
+            Clear
+          </button>
+        )}
+      </form>
+
+      {search && (
+        <p className="text-xs text-indigo-600 font-medium">
+          Showing results for: <span className="italic">"{search}"</span>
+        </p>
+      )}
 
       {error && <p className="text-red-600">{error}</p>}
 
