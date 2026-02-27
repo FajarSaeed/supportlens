@@ -56,6 +56,7 @@ def create_trace(payload: TraceCreate, db: Session = Depends(get_db)):
 @app.get("/traces", response_model=list[TraceOut])
 def list_traces(
     category: str | None = Query(default=None),
+    search: str | None = Query(default=None, description="Filter by keyword in user message or bot response"),
     db: Session = Depends(get_db),
 ):
     q = db.query(Trace)
@@ -63,6 +64,11 @@ def list_traces(
         cat = _VALUE_TO_CATEGORY.get(category)
         if cat:
             q = q.filter(Trace.category == cat)
+    if search:
+        term = f"%{search.lower()}%"
+        q = q.filter(
+            Trace.user_message.ilike(term) | Trace.bot_response.ilike(term)
+        )
     return q.order_by(Trace.timestamp.desc()).all()
 
 @app.get("/analytics", response_model=AnalyticsOut)

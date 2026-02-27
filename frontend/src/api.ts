@@ -46,9 +46,14 @@ export const api = {
   getAnalytics: () =>
     http.get<AnalyticsOut>('/analytics').then((r) => r.data),
 
-  getTraces: (category?: string) =>
+  getTraces: (category?: string, search?: string) =>
     http
-      .get<TraceOut[]>('/traces', { params: category ? { category } : {} })
+      .get<TraceOut[]>('/traces', {
+        params: {
+          ...(category ? { category } : {}),
+          ...(search ? { search } : {}),
+        },
+      })
       .then((r) => r.data),
 
   postTrace: (payload: {
