@@ -1,7 +1,10 @@
-from datetime import datetime, timedelta
 import uuid
+from datetime import datetime, timedelta
+
 from sqlalchemy.orm import Session
-from .models import Trace, Category
+
+from .models import Category, Trace
+
 
 def seed_if_empty(db: Session):
     if db.query(Trace).count() > 0:

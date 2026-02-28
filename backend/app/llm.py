@@ -7,8 +7,8 @@ keyword-based stubs so the whole app runs locally for free.
 """
 
 import os
-import time
 import random
+import time
 
 # ── optional dotenv loading ──────────────────────────────────────────────────
 try:

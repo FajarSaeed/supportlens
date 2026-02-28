@@ -1,6 +1,7 @@
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, field_serializer
 from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 Category = Literal["Billing", "Refund", "Account Access", "Cancellation", "General Inquiry"]
 
