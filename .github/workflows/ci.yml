@@ -31,7 +31,6 @@ jobs:
 
       - name: Pyright type-check (backend)
         run: pyright backend/app/
-        continue-on-error: true   # type stubs for third-party libs may be missing in CI
 
       - name: Set up Node
         uses: actions/setup-node@v4
