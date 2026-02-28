@@ -1,0 +1,21 @@
+# Ruff configuration for SupportLens backend
+# https://docs.astral.sh/ruff/configuration/
+
+target-version = "py311"
+line-length = 100
+
+[lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long — handled by formatter
+    "UP007", # X | Y union syntax — keep | None style
+]
+
+[lint.per-file-ignores]
+"backend/app/seed.py" = ["E501"]  # long sample strings are fine

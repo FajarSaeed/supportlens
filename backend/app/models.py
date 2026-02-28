@@ -1,10 +1,13 @@
 import enum
 from datetime import datetime
-from sqlalchemy import String, DateTime, Integer, Enum
+
+from sqlalchemy import DateTime, Enum, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
+
 from .db import Base
 
-class Category(str, enum.Enum):
+
+class Category(enum.StrEnum):
     Billing = "Billing"
     Refund = "Refund"
     AccountAccess = "Account Access"

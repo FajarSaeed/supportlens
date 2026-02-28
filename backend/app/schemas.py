@@ -1,6 +1,7 @@
 from datetime import datetime
-from pydantic import BaseModel, ConfigDict, Field, field_serializer
 from typing import Literal
+
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 Category = Literal["Billing", "Refund", "Account Access", "Cancellation", "General Inquiry"]
 
@@ -22,7 +23,9 @@ class TraceOut(BaseModel):
     @field_serializer("category")
     def serialize_category(self, value: object) -> str:
         # value may be a models.Category enum or already a plain string
-        return value.value if hasattr(value, "value") else str(value)
+        if hasattr(value, "value"):
+            return str(getattr(value, "value"))
+        return str(value)
 
 class AnalyticsOut(BaseModel):
     total_traces: int

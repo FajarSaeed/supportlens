@@ -1,16 +1,20 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+import os
 
-DATABASE_URL = "sqlite:///./supportlens.db"
+from sqlalchemy import create_engine, text
+from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False},  # sqlite
-)
+# Allow DATABASE_URL to be overridden via environment (e.g. in Docker)
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./supportlens.db")
+
+_connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+
+engine = create_engine(DATABASE_URL, connect_args=_connect_args)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
 
 class Base(DeclarativeBase):
     pass
+
 
 def get_db():
     db = SessionLocal()
@@ -18,3 +22,13 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def check_db() -> bool:
+    """Return True if the database is reachable, False otherwise."""
+    try:
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+        return True
+    except Exception:
+        return False

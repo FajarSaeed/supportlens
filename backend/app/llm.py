@@ -7,8 +7,8 @@ keyword-based stubs so the whole app runs locally for free.
 """
 
 import os
-import time
 import random
+import time
 
 # ── optional dotenv loading ──────────────────────────────────────────────────
 try:
@@ -119,7 +119,8 @@ def _real_chat(user_message: str, model: str = "gpt-4o-mini") -> str:
         ],
         temperature=0.4,
     )
-    return resp.choices[0].message.content.strip()
+    content = resp.choices[0].message.content
+    return content.strip() if content is not None else ""
 
 
 def _real_classify(user_message: str, bot_response: str, model: str = "gpt-4o-mini") -> str:
@@ -134,7 +135,8 @@ def _real_classify(user_message: str, bot_response: str, model: str = "gpt-4o-mi
         ],
         temperature=0,
     )
-    category = resp.choices[0].message.content.strip()
+    raw = resp.choices[0].message.content
+    category = raw.strip() if raw is not None else ""
     allowed = {"Billing", "Refund", "Account Access", "Cancellation", "General Inquiry"}
     return category if category in allowed else "General Inquiry"
 
